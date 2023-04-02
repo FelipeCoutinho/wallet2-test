@@ -11,7 +11,49 @@ datasource db {
 }
 
 model User {
-  id    Int     @default(autoincrement()) @id
-  email String  @unique
-  name  String?
+  userId Int      @id @default(autoincrement())
+  email  String   @unique
+  name   String?
+  Wallet Wallet[]
+}
+
+model Wallet {
+  walletId     Int            @id @default(autoincrement())
+  balance      Float
+  userId       Int
+  user         User           @relation(fields: [userId], references: [userId])
+  creatAt      DateTime
+  transactions transactions[]
+}
+
+model transactions {
+  transactionId Int      @id @default(autoincrement())
+  walletId      Int
+  credcardId    Int
+  value         Float
+  type          String
+  wallat        Wallet   @relation(fields: [walletId], references: [walletId])
+  credcar       credcard @relation(fields: [credcardId], references: [credcardId])
+  creatAt       DateTime
+  log           log[]
+}
+
+model credcard {
+  credcardId   Int            @id @default(autoincrement())
+  userId       Int
+  balance      Float
+  active       String
+  creatAt      DateTime
+  transactions transactions[]
+}
+
+model log {
+  logID         Int          @id @default(autoincrement())
+  transactionId Int
+  operationType Float
+  date          DateTime
+  registry      Json
+  active        String
+  transation    transactions @relation(fields: [transactionId], references: [transactionId])
+  creatAt       DateTime
 }
