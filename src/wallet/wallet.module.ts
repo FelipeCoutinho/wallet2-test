@@ -3,7 +3,7 @@ import { WalletService } from './wallet.service';
 import { WalletController } from './wallet.controller';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { WalletRepository } from './wallet.repository';
-import { PrismaWalletRepository } from './prisma.wallet.repository';
+import { PrismaWalletRepository } from './prisma/prisma.wallet.repository';
 
 @Module({
   controllers: [WalletController],
