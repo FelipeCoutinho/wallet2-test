@@ -1,11 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { InternalServerErrorException } from '@nestjs/common/exceptions';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
-import { Wallet } from './wallet';
+import { WalletRepository } from './wallet.repository';
 
 @Injectable()
 export class WalletService {
-  constructor() {}
+  constructor(private readonly walletRepository: WalletRepository) {}
+  async create(wallet: CreateWalletDto) {
+    try {
+      return this.walletRepository.create(wallet);
+    } catch (error) {
+      throw InternalServerErrorException;
+    }
+  }
 
   findAll() {
     return `This action returns all wallet`;
