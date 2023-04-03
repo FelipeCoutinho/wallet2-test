@@ -17,18 +17,20 @@ export class WalletController {
     }
   }
   @Post('/deposit')
-  deposit(@Body() bady: any) {
+  async deposit(@Body() body: any) {
     try {
-      return this.walletService.deposit(Number(bady.value));
+      const { walletId, amount } = body;
+      return this.walletService.deposit(walletId, amount);
     } catch (error) {
       return error.stack;
     }
   }
 
   @Get('/withdraw')
-  withdraw(@Body() body: any) {
+  async withdraw(@Body() body: any) {
     try {
-      return this.walletService.withdraw(Number(body.value));
+      const { walletId, amount } = body;
+      return this.walletService.withdraw(walletId, amount);
     } catch (error) {
       return error.stack;
     }

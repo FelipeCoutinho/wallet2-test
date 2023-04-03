@@ -16,4 +16,46 @@ export class PrismaWalletRepository implements WalletRepository {
       throw new Error(error);
     }
   }
+
+  async findOne(walletId): Promise<any> {
+    try {
+      return this.prisma.wallet.findFirst({
+        where: {
+          walletId,
+        },
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async deposit(walletId: any, amount): Promise<any> {
+    try {
+      return this.prisma.wallet.update({
+        where: {
+          walletId,
+        },
+        data: {
+          balance: amount,
+        },
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async withdraw(walletId: number, amount: number): Promise<any> {
+    try {
+      return this.prisma.wallet.update({
+        where: {
+          walletId,
+        },
+        data: {
+          balance: amount,
+        },
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }
