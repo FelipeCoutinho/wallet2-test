@@ -5,10 +5,14 @@ import {
   chargebackDTO,
   paymentDTO,
 } from './dto/create-wallet.dto';
+import { PaymentService } from 'src/payment/payment.service';
 
 @Controller('wallet')
 export class WalletController {
-  constructor(private readonly walletService: WalletService) {}
+  constructor(
+    private readonly walletService: WalletService,
+    private readonly paymentService: PaymentService,
+  ) {}
 
   @Post()
   creat(@Body() body: CreateWalletDto) {
@@ -41,7 +45,7 @@ export class WalletController {
   @Post('/payment')
   payment(@Body() payment: paymentDTO) {
     try {
-      return this.walletService.handlerPayment(
+      return this.paymentService.handlerPayment(
         payment.walletId,
         payment.amount,
         payment.typePayment,
@@ -54,7 +58,7 @@ export class WalletController {
   @Post('chargeback')
   chargeback(@Body() chargeback: chargebackDTO) {
     try {
-      return this.walletService.chargeback(
+      return this.paymentService.chargeback(
         chargeback.walletId,
         chargeback.amount,
         chargeback.typePayment,
