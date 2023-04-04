@@ -7,7 +7,7 @@ import { WalletRepository } from '../wallet.repository';
 export class PrismaWalletRepository implements WalletRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(wallet: CreateWalletDto): Promise<any> {
+  async create(wallet): Promise<any> {
     try {
       await this.prisma.wallet.create({
         data: wallet,
