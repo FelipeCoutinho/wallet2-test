@@ -11,10 +11,12 @@ datasource db {
 }
 
 model User {
-  userId Int      @id @default(autoincrement())
-  email  String   @unique
-  name   String?
-  Wallet Wallet[]
+  userId    Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  Wallet    Wallet[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model Wallet {

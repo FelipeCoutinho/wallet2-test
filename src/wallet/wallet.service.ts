@@ -13,6 +13,7 @@ export class WalletService {
     private readonly walletRepository: WalletRepository,
     private readonly transactionRepository: TransactionRepository,
   ) {}
+
   async create(wallet: CreateWalletDto): Promise<any> {
     try {
       return this.walletRepository.create(wallet);
