@@ -1,6 +1,10 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { WalletService } from './wallet.service';
-import { CreateWalletDto, paymentDTO } from './dto/create-wallet.dto';
+import {
+  CreateWalletDto,
+  chargebackDTO,
+  paymentDTO,
+} from './dto/create-wallet.dto';
 
 @Controller('wallet')
 export class WalletController {
@@ -37,16 +41,24 @@ export class WalletController {
   @Post('/payment')
   payment(@Body() payment: paymentDTO) {
     try {
-      return this.walletService.payment(payment.amount);
+      return this.walletService.payment(
+        payment.walletId,
+        payment.amount,
+        payment.typePayment,
+      );
     } catch (error) {
-      return error.stack;
+      return error;
     }
   }
 
   @Post('chargeback')
-  chargeback(@Body() body: paymentDTO) {
+  chargeback(@Body() chargeback: chargebackDTO) {
     try {
-      return this.walletService.chargeback(2);
+      return this.walletService.chargeback(
+        chargeback.walletId,
+        chargeback.amount,
+        chargeback.typePayment,
+      );
     } catch (error) {
       return error.stack;
     }

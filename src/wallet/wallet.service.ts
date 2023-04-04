@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InternalServerErrorException } from '@nestjs/common/exceptions';
 import { BadRequestException } from '@nestjs/common';
 import { CreateWalletDto } from './dto/create-wallet.dto';
-import { UpdateWalletDto } from './dto/update-wallet.dto';
 import { WalletRepository } from './wallet.repository';
-import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
+import { typePaymentEnum } from './enum/payment.enum';
+import { operationEnum } from './enum/payment.enum';
 
 @Injectable()
 export class WalletService {
@@ -15,10 +15,6 @@ export class WalletService {
     } catch (error) {
       throw InternalServerErrorException;
     }
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} wallet`;
   }
 
   async findOne(walletId): Promise<any> {
@@ -53,7 +49,6 @@ export class WalletService {
       const wallet = await this.findOne(walletId);
 
       if (wallet.balance < amount) {
-        //TODO: trocao para exeption do proprio nest
         return new BadRequestException(
           'your balance is not enough for  this withdraw',
         );
@@ -75,11 +70,94 @@ export class WalletService {
     }
   }
 
-  payment(amount: number) {
-    return amount;
+  async payment(
+    walletId: number,
+    amount: number,
+    typePaymentparam: number,
+  ): Promise<any> {
+    try {
+      const wallet = await this.findOne(walletId);
+
+      switch (typePaymentparam) {
+        case typePaymentEnum.BALANCE:
+          return this.paymentBalance(wallet, amount, walletId);
+
+        default:
+          return this.paymentBalance(wallet, amount, walletId);
+      }
+    } catch (error) {
+      throw InternalServerErrorException;
+    }
   }
 
-  chargeback(amount: number) {
-    return { ok: true, amount: amount };
+  async paymentBalance(
+    wallet: CreateWalletDto,
+    amount: number,
+    walletId: number,
+  ) {
+    try {
+      if (wallet.balance < amount) {
+        return new BadRequestException(
+          'your balance is not enough for  this payment',
+        );
+      }
+
+      wallet.balance -= amount;
+
+      const result = await this.walletRepository.payment(
+        walletId,
+        wallet.balance,
+      );
+
+      return {
+        balance: result.balance,
+        payment: amount,
+        paymentMethod: 'balance',
+      };
+    } catch (error) {
+      throw InternalServerErrorException;
+    }
+  }
+
+  async chargeback(
+    walletId: number,
+    amount: number,
+    typePaymentparam: number,
+  ): Promise<any> {
+    try {
+      const wallet = await this.findOne(walletId);
+
+      switch (typePaymentparam) {
+        case typePaymentEnum.BALANCE:
+          return this.chargebackBalance(wallet, amount, walletId);
+        default:
+          return this.chargebackBalance(wallet, amount, walletId);
+      }
+    } catch (error) {
+      throw InternalServerErrorException;
+    }
+  }
+
+  async chargebackBalance(
+    wallet: CreateWalletDto,
+    amount: number,
+    walletId: number,
+  ) {
+    try {
+      wallet.balance += amount;
+
+      const result = await this.walletRepository.payment(
+        walletId,
+        wallet.balance,
+      );
+
+      return {
+        balance: result.balance,
+        chargeback: amount,
+        paymentMethod: 'balance',
+      };
+    } catch (error) {
+      throw InternalServerErrorException;
+    }
   }
 }

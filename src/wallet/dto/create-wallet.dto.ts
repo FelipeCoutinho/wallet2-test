@@ -12,5 +12,22 @@ export class CreateWalletDto {
 export class paymentDTO {
   @ApiProperty()
   @IsNumber()
+  walletId: number;
+  @ApiProperty()
+  @IsNumber()
   amount: number;
+  @ApiProperty()
+  @IsNumber()
+  typePayment: number;
+}
+export class chargebackDTO {
+  @ApiProperty()
+  @IsNumber()
+  walletId: number;
+  @ApiProperty()
+  @IsNumber()
+  amount: number;
+  @ApiProperty()
+  @IsNumber()
+  typePayment: number;
 }
