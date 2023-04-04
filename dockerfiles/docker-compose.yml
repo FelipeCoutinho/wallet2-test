@@ -1,0 +1,17 @@
+version: '3.1'
+services:
+  app:
+    container_name: app-wallet
+    build:
+      context: ../
+      dockerfile: dockerfiles/Dockerfile
+    ports:
+      - '3000:3000'
+
+  database:
+    image: postgres
+    environment:
+      - POSTGRES_USER=walletteste
+      - POSTGRES_PASSWORD=123
+    ports:
+      - '5432:5432'
