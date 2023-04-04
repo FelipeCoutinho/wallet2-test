@@ -66,6 +66,7 @@ $ npm run test:cov
 ## LOGIC
 ![image](https://user-images.githubusercontent.com/30913247/229671390-6ee5295a-adba-4fd2-94e9-10d74f88ed2b.png)
 
+Link da documentação: https://app.diagrams.net/#G1LdAEeKeAHpw8F96Z1rubbvg7tL5a046K
 
 ## Support
 
