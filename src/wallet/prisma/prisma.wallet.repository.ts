@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateWalletDto } from '../dto/create-wallet.dto';
 import { WalletRepository } from '../wallet.repository';
 
 @Injectable()
@@ -9,7 +8,7 @@ export class PrismaWalletRepository implements WalletRepository {
 
   async create(wallet): Promise<any> {
     try {
-      await this.prisma.wallet.create({
+      return this.prisma.wallet.create({
         data: wallet,
       });
     } catch (error) {

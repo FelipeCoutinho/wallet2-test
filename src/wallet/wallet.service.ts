@@ -1,22 +1,31 @@
 import { Injectable } from '@nestjs/common';
-import { InternalServerErrorException } from '@nestjs/common/exceptions';
 import { BadRequestException } from '@nestjs/common';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { WalletRepository } from './wallet.repository';
 import { typePaymentEnum } from './enum/payment.enum';
 import { operationEnum } from './enum/payment.enum';
 import { TransactionRepository } from 'src/transactions/Transaction.,repository';
+import { CreditCardRepository } from 'src/creditcard/creditcard.repository';
 
 @Injectable()
 export class WalletService {
   constructor(
     private readonly walletRepository: WalletRepository,
     private readonly transactionRepository: TransactionRepository,
+    private readonly creditCardRepository: CreditCardRepository,
   ) {}
 
   async create(wallet: CreateWalletDto): Promise<any> {
     try {
-      return this.walletRepository.create(wallet);
+      const walletResult = await this.walletRepository.create(wallet);
+
+      const card = {
+        balance: walletResult.balance,
+        active: true,
+        walletId: walletResult.walletId,
+      };
+
+      return this.creditCardRepository.create(card);
     } catch (error) {
       return new BadRequestException(error);
     }
