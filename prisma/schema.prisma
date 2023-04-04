@@ -20,16 +20,15 @@ model User {
 }
 
 model Wallet {
-  walletId             Int            @id @default(autoincrement())
-  balance              Float
-  userId               Int
-  transactions         transactions[]
-  User                 User?          @relation(fields: [userUserId], references: [userId])
-  userUserId           Int?
-  creditcardCredcardId Int
-  creditcard           creditcard     @relation(fields: [creditcardCredcardId], references: [credcardId])
-  createdAt            DateTime       @default(now())
-  updatedAt            DateTime       @default(now())
+  walletId     Int            @id @default(autoincrement())
+  balance      Float
+  userId       Int
+  transactions transactions[]
+  User         User?          @relation(fields: [userUserId], references: [userId])
+  userUserId   Int?
+  creditcard   creditcard[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @default(now())
 }
 
 model transactions {
@@ -43,10 +42,11 @@ model transactions {
 }
 
 model creditcard {
-  credcardId Int      @id @default(autoincrement())
-  balance    Float
-  active     String
-  Wallet     Wallet[]
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now())
+  credcardId     Int      @id @default(autoincrement())
+  balance        Float
+  active         String
+  walletWalletId Int?
+  Wallet         Wallet?  @relation(fields: [walletWalletId], references: [walletId])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now())
 }
