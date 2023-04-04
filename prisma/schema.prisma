@@ -21,9 +21,12 @@ model Wallet {
   walletId     Int            @id @default(autoincrement())
   balance      Float
   userId       Int
-  user         User           @relation(fields: [userId], references: [userId])
-  creatAt      DateTime
+  // user         User           @relation(fields: [userId], references: [userId])
+  creatAt      DateTime       @default(now())
+  updatedAt    DateTime       @default(now())
   transactions transactions[]
+  User         User?          @relation(fields: [userUserId], references: [userId])
+  userUserId   Int?
 }
 
 model transactions {
@@ -34,7 +37,8 @@ model transactions {
   type          String
   wallat        Wallet   @relation(fields: [walletId], references: [walletId])
   credcar       credcard @relation(fields: [credcardId], references: [credcardId])
-  creatAt       DateTime
+  creatAt       DateTime @default(now())
+  updatedAt     DateTime @default(now())
   log           log[]
 }
 
@@ -43,7 +47,8 @@ model credcard {
   userId       Int
   balance      Float
   active       String
-  creatAt      DateTime
+  creatAt      DateTime       @default(now())
+  updatedAt    DateTime       @default(now())
   transactions transactions[]
 }
 
@@ -55,5 +60,6 @@ model log {
   registry      Json
   active        String
   transation    transactions @relation(fields: [transactionId], references: [transactionId])
-  creatAt       DateTime
+  creatAt       DateTime     @default(now())
+  updatedAt     DateTime     @default(now())
 }
