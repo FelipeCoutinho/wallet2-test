@@ -15,4 +15,31 @@ export class PrismaCreditCardRepository implements CreditCardRepository {
       throw new Error(error);
     }
   }
+
+  async findOne(walletId): Promise<any> {
+    try {
+      return this.prisma.creditcard.findFirst({
+        where: {
+          walletId,
+        },
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async payment(credcardId: number, amount: number): Promise<any> {
+    try {
+      return this.prisma.creditcard.update({
+        where: {
+          credcardId,
+        },
+        data: {
+          balance: amount,
+        },
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }

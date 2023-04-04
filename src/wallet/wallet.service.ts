@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { BadRequestException } from '@nestjs/common';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { WalletRepository } from './wallet.repository';
-import { typePaymentEnum } from './enum/payment.enum';
+import { PaymentTypeEnum } from './enum/payment.enum';
 import { operationEnum } from './enum/payment.enum';
-import { TransactionRepository } from 'src/transactions/Transaction.,repository';
+import { TransactionRepository } from 'src/transactions/Transaction.repository';
 import { CreditCardRepository } from 'src/creditcard/creditcard.repository';
+import { type } from 'os';
 
 @Injectable()
 export class WalletService {
@@ -20,7 +21,7 @@ export class WalletService {
       const walletResult = await this.walletRepository.create(wallet);
 
       const card = {
-        balance: walletResult.balance,
+        balance: 2000,
         active: true,
         walletId: walletResult.walletId,
       };
@@ -39,27 +40,31 @@ export class WalletService {
     }
   }
 
+  async creditCarFindOne(walletId): Promise<any> {
+    try {
+      return this.creditCardRepository.findOne(walletId);
+    } catch (error) {
+      return new BadRequestException(error);
+    }
+  }
+
   async deposit(walletId: number, amount: number): Promise<any> {
     try {
       const wallet = await this.findOne(walletId);
 
       wallet.balance += amount;
 
-      const result = await this.walletRepository.deposit(
-        walletId,
-        wallet.balance,
-      );
-
-      const transaction = await this.transaction(
-        walletId,
-        amount,
-        operationEnum.DEPOSIT,
-      );
+      const [resultDeposit, transactionResult] = await Promise.all([
+        this.walletRepository.deposit(walletId, wallet.balance),
+        this.transaction(walletId, amount, operationEnum.DEPOSIT),
+      ]);
 
       return {
-        balance: result.balance,
-        deposit: amount,
-        transaction: transaction,
+        wallet: {
+          balance: resultDeposit.balance,
+          deposit: amount,
+        },
+        stratum: transactionResult,
       };
     } catch (error) {
       return new BadRequestException(error);
@@ -79,41 +84,56 @@ export class WalletService {
 
       wallet.balance -= amount;
 
-      const result = await this.walletRepository.withdraw(
-        walletId,
-        wallet.balance,
-      );
-
-      const transaction = await this.transaction(
-        walletId,
-        amount,
-        operationEnum.DEPOSIT,
-      );
+      const [withdrawResult, transactionResult] = await Promise.all([
+        this.walletRepository.withdraw(walletId, wallet.balance),
+        this.transaction(walletId, amount, operationEnum.DEPOSIT),
+      ]);
 
       return {
-        balance: result.balance,
+        balance: withdrawResult.balance,
         saque: amount,
-        transaction,
+        transactionResult,
       };
     } catch (error) {
       return new BadRequestException(error);
     }
   }
 
-  async payment(
+  async handlerPayment(
     walletId: number,
     amount: number,
     typePaymentparam: number,
   ): Promise<any> {
     try {
-      const wallet = await this.findOne(walletId);
+      const [wallet, creditcard] = await Promise.all([
+        this.findOne(walletId),
+        this.creditCarFindOne(walletId),
+      ]);
 
       switch (typePaymentparam) {
-        case typePaymentEnum.BALANCE:
-          return this.paymentBalance(wallet, amount, walletId);
-
+        case PaymentTypeEnum.BALANCE:
+          return this.paymentBalance(
+            wallet,
+            amount,
+            walletId,
+            PaymentTypeEnum.BALANCE,
+          );
+        case PaymentTypeEnum.CREDCARD:
+          return this.paymentCreditCard(
+            creditcard,
+            amount,
+            walletId,
+            PaymentTypeEnum.BALANCE,
+          );
+        case PaymentTypeEnum.MISTO:
+          return this.paymentMisto({ creditcard, wallet, amount: amount });
         default:
-          return this.paymentBalance(wallet, amount, walletId);
+          return this.paymentBalance(
+            wallet,
+            amount,
+            walletId,
+            PaymentTypeEnum.BALANCE,
+          );
       }
     } catch (error) {
       return new BadRequestException(error);
@@ -124,33 +144,108 @@ export class WalletService {
     wallet: CreateWalletDto,
     amount: number,
     walletId: number,
+    paymentType: number,
   ) {
     try {
-      if (wallet.balance < amount) {
-        return new BadRequestException(
-          'your balance is not enough for  this payment',
-        );
+      if (paymentType === PaymentTypeEnum.BALANCE) {
+        if (wallet.balance < amount) {
+          return new BadRequestException(
+            'your balance is not enough for  this payment',
+          );
+        }
       }
 
       wallet.balance -= amount;
 
-      const result = await this.walletRepository.payment(
-        walletId,
-        wallet.balance,
-      );
-
-      const transaction = await this.transaction(
-        walletId,
-        amount,
-        operationEnum.PAYMENT,
-      );
+      const [paymentResult, transactionResult] = await Promise.all([
+        this.walletRepository.payment(walletId, wallet.balance),
+        this.transaction(walletId, amount, operationEnum.PAYMENT),
+      ]);
 
       return {
-        balance: result.balance,
+        balance: paymentResult.balance,
         payment: amount,
         paymentMethod: 'balance',
-        transaction,
+        transactionResult,
       };
+    } catch (error) {
+      return new BadRequestException(error);
+    }
+  }
+  async paymentCreditCard(
+    creditcard,
+    amount: number,
+    walletId: number,
+    paymentType: number,
+  ) {
+    try {
+      if (paymentType === PaymentTypeEnum.CREDCARD) {
+        if (creditcard.balance < amount) {
+          return new BadRequestException(
+            'your balance is not enough for  this payment',
+          );
+        }
+      }
+
+      creditcard.balance -= amount;
+
+      const [peymentResult, transactionResult] = await Promise.all([
+        this.creditCardRepository.payment(
+          creditcard.credcardId,
+          creditcard.balance,
+        ),
+        this.transaction(walletId, amount, operationEnum.PAYMENT),
+      ]);
+
+      return {
+        balance: peymentResult.balance,
+        payment: amount,
+        paymentMethod: 'balance',
+        transactionResult,
+      };
+    } catch (error) {
+      return new BadRequestException(error);
+    }
+  }
+
+  async paymentMisto(params) {
+    const { creditcard, wallet, amount } = params;
+    try {
+      const saldoTotal = wallet.balance + creditcard.balance;
+
+      if (saldoTotal < amount) {
+        return new BadRequestException(
+          'your balance is not enough for this payment',
+        );
+      }
+
+      if (wallet.balance >= amount) {
+        wallet.balance -= amount;
+        return await this.paymentBalance(
+          wallet,
+          amount,
+          wallet.walletId,
+          PaymentTypeEnum.MISTO,
+        );
+      }
+
+      wallet.balance -= amount;
+      creditcard.balance -= amount;
+
+      return await Promise.all([
+        this.paymentBalance(
+          wallet,
+          amount,
+          wallet.walletId,
+          PaymentTypeEnum.MISTO,
+        ),
+        this.paymentCreditCard(
+          creditcard,
+          amount,
+          wallet.walletId,
+          PaymentTypeEnum.MISTO,
+        ),
+      ]);
     } catch (error) {
       return new BadRequestException(error);
     }
@@ -165,7 +260,7 @@ export class WalletService {
       const wallet = await this.findOne(walletId);
 
       switch (typePaymentparam) {
-        case typePaymentEnum.BALANCE:
+        case PaymentTypeEnum.BALANCE:
           return this.chargebackBalance(wallet, amount, walletId);
         default:
           return this.chargebackBalance(wallet, amount, walletId);
@@ -183,22 +278,17 @@ export class WalletService {
     try {
       wallet.balance += amount;
 
-      const result = await this.walletRepository.payment(
-        walletId,
-        wallet.balance,
-      );
+      const [chargebackResult, transactionResult] = await Promise.all([
+        this.walletRepository.chargeback(walletId, wallet.balance),
 
-      const transaction = await this.transaction(
-        walletId,
-        amount,
-        operationEnum.CHARGEBACK,
-      );
+        this.transaction(walletId, amount, operationEnum.CHARGEBACK),
+      ]);
 
       return {
-        balance: result.balance,
+        balance: chargebackResult.balance,
         chargeback: amount,
         paymentMethod: 'balance',
-        transaction,
+        transactionResult,
       };
     } catch (error) {
       return new BadRequestException(error);

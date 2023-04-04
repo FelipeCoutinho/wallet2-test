@@ -5,7 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { WalletRepository } from './wallet.repository';
 import { PrismaWalletRepository } from './prisma/prisma.wallet.repository';
 import { PrismaTransactionRepository } from 'src/transactions/prisma.transaction.repository';
-import { TransactionRepository } from 'src/transactions/Transaction.,repository';
+import { TransactionRepository } from 'src/transactions/Transaction.repository';
 import { CreditCardRepository } from 'src/creditcard/creditcard.repository';
 import { PrismaCreditCardRepository } from 'src/creditcard/prisma.creditcard.repository';
 

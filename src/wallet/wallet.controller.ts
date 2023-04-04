@@ -41,7 +41,7 @@ export class WalletController {
   @Post('/payment')
   payment(@Body() payment: paymentDTO) {
     try {
-      return this.walletService.payment(
+      return this.walletService.handlerPayment(
         payment.walletId,
         payment.amount,
         payment.typePayment,

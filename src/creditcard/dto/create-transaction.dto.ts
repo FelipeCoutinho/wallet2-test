@@ -4,6 +4,9 @@ import { IsNumber } from 'class-validator';
 export class CreateCreditCardDto {
   @ApiProperty()
   @IsNumber()
+  creditcardId?: number;
+  @ApiProperty()
+  @IsNumber()
   balance: number;
   @ApiProperty()
   @IsNumber()
