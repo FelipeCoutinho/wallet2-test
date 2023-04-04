@@ -74,9 +74,16 @@ export class WalletService {
         wallet.balance,
       );
 
+      const transaction = await this.transaction(
+        walletId,
+        amount,
+        operationEnum.DEPOSIT,
+      );
+
       return {
         balance: result.balance,
         saque: amount,
+        transaction,
       };
     } catch (error) {
       return new BadRequestException(error);
@@ -122,10 +129,17 @@ export class WalletService {
         wallet.balance,
       );
 
+      const transaction = await this.transaction(
+        walletId,
+        amount,
+        operationEnum.PAYMENT,
+      );
+
       return {
         balance: result.balance,
         payment: amount,
         paymentMethod: 'balance',
+        transaction,
       };
     } catch (error) {
       return new BadRequestException(error);
@@ -164,10 +178,17 @@ export class WalletService {
         wallet.balance,
       );
 
+      const transaction = await this.transaction(
+        walletId,
+        amount,
+        operationEnum.CHARGEBACK,
+      );
+
       return {
         balance: result.balance,
         chargeback: amount,
         paymentMethod: 'balance',
+        transaction,
       };
     } catch (error) {
       return new BadRequestException(error);
