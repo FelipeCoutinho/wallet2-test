@@ -2,8 +2,6 @@
 FROM node:18 AS builder
 WORKDIR /app
 
-ARG NODE_AUTH_TOKEN
-
 RUN apk update && apk add python3 make g++
 
 COPY package*.json ./
@@ -15,11 +13,10 @@ RUN rm -f .npmrc
 COPY . ./
 
 # release
-FROM node:18-alpine
+FROM node:18
 WORKDIR /app
 
 # env vars
-ENV AWS_NODEJS_CONNECTION_REUSE_ENABLED=1
 ENV NODE_ENV=production
 
 # copy
@@ -30,4 +27,4 @@ COPY --from=builder /app/src /app/src
 
 # run
 EXPOSE 3000
-CMD ["node", "src/index.js"]
+CMD ["node", "src/main.js"]
