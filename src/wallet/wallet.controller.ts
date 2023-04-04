@@ -24,7 +24,7 @@ export class WalletController {
       const { walletId, amount } = body;
       return this.walletService.deposit(walletId, amount);
     } catch (error) {
-      return error.stack;
+      return error;
     }
   }
 
