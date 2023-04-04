@@ -18,48 +18,33 @@ model User {
 }
 
 model Wallet {
-  walletId     Int            @id @default(autoincrement())
-  balance      Float
-  userId       Int
-  // user         User           @relation(fields: [userId], references: [userId])
-  creatAt      DateTime       @default(now())
-  updatedAt    DateTime       @default(now())
-  transactions transactions[]
-  User         User?          @relation(fields: [userUserId], references: [userId])
-  userUserId   Int?
+  walletId             Int            @id @default(autoincrement())
+  balance              Float
+  userId               Int
+  transactions         transactions[]
+  User                 User?          @relation(fields: [userUserId], references: [userId])
+  userUserId           Int?
+  creditcardCredcardId Int
+  creditcard           creditcard     @relation(fields: [creditcardCredcardId], references: [credcardId])
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @default(now())
 }
 
 model transactions {
-  transactionId Int      @id @default(autoincrement())
-  walletId      Int
-  credcardId    Int
-  value         Float
-  type          String
-  wallat        Wallet   @relation(fields: [walletId], references: [walletId])
-  credcar       credcard @relation(fields: [credcardId], references: [credcardId])
-  creatAt       DateTime @default(now())
-  updatedAt     DateTime @default(now())
-  log           log[]
+  creditcardId Int      @id @default(autoincrement())
+  walletId     Int
+  amount       Float
+  type         String
+  wallat       Wallet   @relation(fields: [walletId], references: [walletId])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
 }
 
-model credcard {
-  credcardId   Int            @id @default(autoincrement())
-  userId       Int
-  balance      Float
-  active       String
-  creatAt      DateTime       @default(now())
-  updatedAt    DateTime       @default(now())
-  transactions transactions[]
-}
-
-model log {
-  logID         Int          @id @default(autoincrement())
-  transactionId Int
-  operationType Float
-  date          DateTime
-  registry      Json
-  active        String
-  transation    transactions @relation(fields: [transactionId], references: [transactionId])
-  creatAt       DateTime     @default(now())
-  updatedAt     DateTime     @default(now())
+model creditcard {
+  credcardId Int      @id @default(autoincrement())
+  balance    Float
+  active     String
+  Wallet     Wallet[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
 }
