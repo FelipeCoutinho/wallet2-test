@@ -41,11 +41,11 @@ model transactions {
 }
 
 model creditcard {
-  credcardId     Int      @id @default(autoincrement())
-  balance        Float
-  active         String
-  walletWalletId Int?
-  Wallet         Wallet?  @relation(fields: [walletWalletId], references: [walletId])
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @default(now())
+  credcardId Int      @id @default(autoincrement())
+  balance    Float
+  active     Boolean
+  walletId   Int?
+  Wallet     Wallet?  @relation(fields: [walletId], references: [walletId])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
 }
