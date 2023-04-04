@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import {
-  BadRequestException,
-  ForbiddenException,
-  InternalServerErrorException,
-} from '@nestjs/common/exceptions';
+import { InternalServerErrorException } from '@nestjs/common/exceptions';
+import { BadRequestException } from '@nestjs/common';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
 import { WalletRepository } from './wallet.repository';
@@ -57,9 +54,9 @@ export class WalletService {
 
       if (wallet.balance < amount) {
         //TODO: trocao para exeption do proprio nest
-        return `your balance is not enough for  this withdraw
-                balance: ${''}
-                `;
+        return new BadRequestException(
+          'your balance is not enough for  this withdraw',
+        );
       }
 
       wallet.balance -= amount;

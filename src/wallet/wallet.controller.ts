@@ -1,8 +1,6 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { WalletService } from './wallet.service';
-import { CreateWalletDto } from './dto/create-wallet.dto';
-import { UpdateWalletDto, paymentDTO } from './dto/update-wallet.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateWalletDto, paymentDTO } from './dto/create-wallet.dto';
 
 @Controller('wallet')
 export class WalletController {
@@ -39,7 +37,7 @@ export class WalletController {
   @Post('/payment')
   payment(@Body() payment: paymentDTO) {
     try {
-      return this.walletService.payment(payment.value);
+      return this.walletService.payment(payment.amount);
     } catch (error) {
       return error.stack;
     }
@@ -48,7 +46,7 @@ export class WalletController {
   @Post('chargeback')
   chargeback(@Body() body: paymentDTO) {
     try {
-      return this.walletService.chargeback(Number(body.value));
+      return this.walletService.chargeback(2);
     } catch (error) {
       return error.stack;
     }
