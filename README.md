@@ -57,6 +57,15 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+## ER
+![image](https://user-images.githubusercontent.com/30913247/229671152-e15ec673-2ba5-4ed9-a28b-32e316fa9da1.png)
+
+## UML
+![image](https://user-images.githubusercontent.com/30913247/229671276-21ded2af-5af1-4cf9-a080-ac76c162b4a9.png)
+
+## LOGIC
+![image](https://user-images.githubusercontent.com/30913247/229671390-6ee5295a-adba-4fd2-94e9-10d74f88ed2b.png)
+
 
 ## Support
 
@@ -64,7 +73,7 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 ## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
+- Author - Felipe Coutinho
 - Website - [https://nestjs.com](https://nestjs.com/)
 - Twitter - [@nestframework](https://twitter.com/nestframework)
 
