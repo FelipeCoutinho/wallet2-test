@@ -9,6 +9,7 @@ import { TransactionRepository } from 'src/transactions/Transaction.repository';
 import { CreditCardRepository } from 'src/creditcard/creditcard.repository';
 import { PrismaCreditCardRepository } from 'src/creditcard/prisma.creditcard.repository';
 import { PaymentService } from 'src/payment/payment.service';
+import { ChargebackService } from 'src/chargeback/chargeback.service';
 
 @Module({
   controllers: [WalletController],
@@ -28,6 +29,7 @@ import { PaymentService } from 'src/payment/payment.service';
       useClass: PrismaCreditCardRepository,
     },
     PaymentService,
+    ChargebackService,
   ],
 })
 export class WalletModule {}

@@ -185,49 +185,6 @@ export class PaymentService {
       throw new BadRequestException(error);
     }
   }
-  async chargeback(
-    walletId: number,
-    amount: number,
-    typePaymentparam: number,
-  ): Promise<any> {
-    try {
-      const wallet = await this.walletService.findOne(walletId);
-
-      switch (typePaymentparam) {
-        case PaymentTypeEnum.BALANCE:
-          return this.chargebackBalance(wallet, amount, walletId);
-        default:
-          return this.chargebackBalance(wallet, amount, walletId);
-      }
-    } catch (error) {
-      return new BadRequestException(error);
-    }
-  }
-
-  async chargebackBalance(
-    wallet: CreateWalletDto,
-    amount: number,
-    walletId: number,
-  ) {
-    try {
-      wallet.balance += amount;
-
-      const [chargebackResult, transactionResult] = await Promise.all([
-        this.walletRepository.chargeback(walletId, wallet.balance),
-
-        this.transaction(walletId, amount, operationEnum.CHARGEBACK),
-      ]);
-
-      return {
-        balance: chargebackResult.balance,
-        chargeback: amount,
-        paymentMethod: 'balance',
-        transactionResult,
-      };
-    } catch (error) {
-      return new BadRequestException(error);
-    }
-  }
 
   async transaction(walletId, amount, type) {
     try {
