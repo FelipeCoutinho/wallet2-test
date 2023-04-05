@@ -69,9 +69,9 @@ export class PaymentService {
             'your balance is not enough for  this payment',
           );
         }
-      }
 
-      wallet.balance -= amount;
+        wallet.balance -= amount;
+      }
 
       const [paymentResult, transactionResult] = await Promise.all([
         this.walletRepository.payment(walletId, wallet.balance),
@@ -101,9 +101,9 @@ export class PaymentService {
             'your balance is not enough for  this payment',
           );
         }
-      }
 
-      creditcard.balance -= amount;
+        creditcard.balance -= amount;
+      }
 
       const [peymentResult, transactionResult] = await Promise.all([
         this.creditCardRepository.payment(
@@ -145,18 +145,21 @@ export class PaymentService {
         );
       }
 
-      wallet.balance -= amount;
-      creditcard.balance -= amount;
+      const calcResult = this.balanceDeductionCalculation(
+        wallet,
+        creditcard,
+        amount,
+      );
 
       return await Promise.all([
         this.paymentBalance(
-          wallet,
+          calcResult.wallet,
           amount,
           wallet.walletId,
           PaymentTypeEnum.MISTO,
         ),
         this.paymentCreditCard(
-          creditcard,
+          calcResult.creditcard,
           amount,
           wallet.walletId,
           PaymentTypeEnum.MISTO,
@@ -167,6 +170,21 @@ export class PaymentService {
     }
   }
 
+  balanceDeductionCalculation(wallet, creditcard, amount) {
+    try {
+      wallet.balance -= amount;
+      creditcard.balance -= Math.abs(wallet.balance);
+      wallet.balance = wallet.balance < 0 ? 0 : wallet.balance;
+      creditcard.balance = creditcard.balance < 0 ? 0 : creditcard.balance;
+
+      return {
+        wallet,
+        creditcard,
+      };
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
   async chargeback(
     walletId: number,
     amount: number,
