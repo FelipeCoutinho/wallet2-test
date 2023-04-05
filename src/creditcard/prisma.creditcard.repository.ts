@@ -42,4 +42,18 @@ export class PrismaCreditCardRepository implements CreditCardRepository {
       throw new Error(error);
     }
   }
+  chargeback(credcardId: number, amount: number): Promise<any> {
+    try {
+      return this.prisma.creditcard.update({
+        where: {
+          credcardId,
+        },
+        data: {
+          balance: amount,
+        },
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }
