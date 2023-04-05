@@ -7,6 +7,7 @@ import {
 } from './dto/create-wallet.dto';
 import { PaymentService } from 'src/payment/payment.service';
 import { ChargebackService } from 'src/chargeback/chargeback.service';
+import { UserService } from 'src/user/user.service';
 
 @Controller('wallet')
 export class WalletController {
@@ -14,12 +15,24 @@ export class WalletController {
     private readonly walletService: WalletService,
     private readonly paymentService: PaymentService,
     private readonly chargebackService: ChargebackService,
+    private readonly userService: UserService,
   ) {}
 
   @Post()
   creat(@Body() body: CreateWalletDto) {
     try {
-      return this.walletService.create(body);
+      return Promise.all([
+        this.walletService.create(body),
+        this.userService.createUser(),
+      ]);
+    } catch (error) {
+      return error.stack;
+    }
+  }
+  @Get('/users')
+  async userList() {
+    try {
+      return this.userService.list();
     } catch (error) {
       return error.stack;
     }
