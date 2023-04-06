@@ -7,16 +7,14 @@ export class PrismaBankstateRepository implements BankstatementRepository {
   constructor(private readonly prisma: PrismaService) {}
   async findMany(walletId): Promise<any> {
     try {
-      return this.prisma.transactions.findMany({
+      return this.prisma.wallet.findMany({
         where: {
           walletId,
         },
         include: {
-          wallat: {
-            select: {
-              transactions: true,
-            },
-          },
+          User: true,
+          creditcard: true,
+          transactions: true,
         },
       });
     } catch (error) {

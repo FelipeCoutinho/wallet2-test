@@ -18,6 +18,14 @@ export class WalletController {
     private readonly userService: UserService,
   ) {}
 
+  @Get('/list')
+  async walletList() {
+    try {
+      return this.walletService.list();
+    } catch (error) {
+      return error.stack;
+    }
+  }
   @Post()
   creat(@Body() body: CreateWalletDto) {
     try {
@@ -37,6 +45,7 @@ export class WalletController {
       return error.stack;
     }
   }
+
   @Post('/deposit')
   async deposit(@Body() body: any) {
     try {

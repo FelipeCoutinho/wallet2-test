@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { WalletRepository } from '../wallet.repository';
+import { WalletRepository } from './wallet.repository';
 
 @Injectable()
 export class PrismaWalletRepository implements WalletRepository {
@@ -11,6 +11,14 @@ export class PrismaWalletRepository implements WalletRepository {
       return this.prisma.wallet.create({
         data: wallet,
       });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async list(): Promise<any> {
+    try {
+      return this.prisma.wallet.findMany();
     } catch (error) {
       throw new Error(error);
     }

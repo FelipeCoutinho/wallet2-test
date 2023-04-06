@@ -3,7 +3,7 @@ import { CreditCardRepository } from 'src/creditcard/creditcard.repository';
 import { TransactionRepository } from 'src/transactions/Transaction.repository';
 import { CreateWalletDto } from 'src/wallet/dto/create-wallet.dto';
 import { PaymentTypeEnum, operationEnum } from 'src/wallet/enum/payment.enum';
-import { WalletRepository } from 'src/wallet/wallet.repository';
+import { WalletRepository } from 'src/wallet/prisma/wallet.repository';
 import { WalletService } from 'src/wallet/wallet.service';
 
 @Injectable()

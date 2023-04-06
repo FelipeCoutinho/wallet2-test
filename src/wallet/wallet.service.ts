@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { BadRequestException } from '@nestjs/common';
 import { CreateWalletDto } from './dto/create-wallet.dto';
-import { WalletRepository } from './wallet.repository';
+import { WalletRepository } from './prisma/wallet.repository';
 import { operationEnum } from './enum/payment.enum';
 import { TransactionRepository } from 'src/transactions/Transaction.repository';
 import { CreditCardRepository } from 'src/creditcard/creditcard.repository';
@@ -28,7 +28,13 @@ export class WalletService {
       return new BadRequestException(error);
     }
   }
-
+  async list(): Promise<any> {
+    try {
+      return this.walletRepository.list();
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
   public async findOne(walletId): Promise<any> {
     try {
       return this.walletRepository.findOne(walletId);
