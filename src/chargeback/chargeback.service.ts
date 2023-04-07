@@ -46,11 +46,17 @@ export class ChargebackService {
   ) {
     try {
       wallet.balance += amount;
-
+      const previousBalance = wallet.balance;
       const [chargebackResult, transactionResult] = await Promise.all([
         this.walletRepository.chargeback(walletId, wallet.balance),
 
-        this.transaction(walletId, amount, operationEnum.CHARGEBACK),
+        this.transaction(
+          walletId,
+          amount,
+          operationEnum.CHARGEBACK,
+          wallet.balance,
+          previousBalance,
+        ),
       ]);
 
       return {
@@ -67,10 +73,16 @@ export class ChargebackService {
   async chargebackCreditCard(creditcard, amount: number, walletId: number) {
     try {
       creditcard.balance += amount;
-
+      const previousBalance = creditcard.balance;
       const [chargebackResult, transactionResult] = await Promise.all([
         this.creditCardRepository.chargeback(walletId, creditcard.balance),
-        this.transaction(walletId, amount, operationEnum.CHARGEBACK),
+        this.transaction(
+          walletId,
+          amount,
+          operationEnum.CHARGEBACK,
+          creditcard.balance,
+          previousBalance,
+        ),
       ]);
 
       return {
@@ -84,12 +96,14 @@ export class ChargebackService {
     }
   }
 
-  async transaction(walletId, amount, type) {
+  async transaction(walletId, amount, type, balance, previousBalance) {
     try {
       const operation = {
         walletId,
         amount,
         type,
+        balance,
+        previousBalance,
       };
 
       return this.transactionRepository.create(operation);
