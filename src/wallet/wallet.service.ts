@@ -3,8 +3,9 @@ import { BadRequestException } from '@nestjs/common';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { WalletRepository } from './prisma/wallet.repository';
 import { operationEnum } from './enum/payment.enum';
-import { TransactionRepository } from 'src/transactions/Transaction.repository';
-import { CreditCardRepository } from 'src/creditcard/creditcard.repository';
+import { TransactionRepository } from '../transactions/Transaction.repository';
+import { CreditCardRepository } from '../creditcard/creditcard.repository';
+import { error } from 'console';
 @Injectable()
 export class WalletService {
   constructor(
@@ -15,15 +16,16 @@ export class WalletService {
 
   public async create(wallet: CreateWalletDto): Promise<any> {
     try {
+      if (!wallet) {
+        throw new Error('walletResult is null');
+      }
       const walletResult = await this.walletRepository.create(wallet);
-
       const card = {
         balance: 2000,
         active: true,
         walletId: walletResult.walletId,
       };
-
-      return this.creditCardRepository.create(card);
+      return await this.creditCardRepository.create(card);
     } catch (error) {
       return new BadRequestException(error);
     }
@@ -99,7 +101,7 @@ export class WalletService {
         this.transaction(
           walletId,
           amount,
-          operationEnum.DEPOSIT,
+          operationEnum.WITHDRAW,
           wallet.balance,
           previousBalance,
         ),
