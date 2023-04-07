@@ -54,12 +54,18 @@ export class WalletService {
   async deposit(walletId: number, amount: number): Promise<any> {
     try {
       const wallet = await this.findOne(walletId);
-
+      const previousBalance = wallet.balance;
       wallet.balance += amount;
 
       const [resultDeposit, transactionResult] = await Promise.all([
         this.walletRepository.deposit(walletId, wallet.balance),
-        this.transaction(walletId, amount, operationEnum.DEPOSIT),
+        this.transaction(
+          walletId,
+          amount,
+          operationEnum.DEPOSIT,
+          wallet.balance,
+          previousBalance,
+        ),
       ]);
 
       return {
@@ -77,6 +83,7 @@ export class WalletService {
   async withdraw(walletId: number, amount: number): Promise<any> {
     try {
       const wallet = await this.findOne(walletId);
+      const previousBalance = wallet.balance;
 
       if (wallet.balance < amount) {
         return new BadRequestException(
@@ -89,7 +96,13 @@ export class WalletService {
 
       const [withdrawResult, transactionResult] = await Promise.all([
         this.walletRepository.withdraw(walletId, wallet.balance),
-        this.transaction(walletId, amount, operationEnum.DEPOSIT),
+        this.transaction(
+          walletId,
+          amount,
+          operationEnum.DEPOSIT,
+          wallet.balance,
+          previousBalance,
+        ),
       ]);
 
       return {
@@ -102,12 +115,14 @@ export class WalletService {
     }
   }
 
-  async transaction(walletId, amount, type) {
+  async transaction(walletId, amount, type, balance, previousBalance) {
     try {
       const operation = {
         walletId,
         amount,
         type,
+        balance,
+        previousBalance,
       };
 
       return this.transactionRepository.create(operation);

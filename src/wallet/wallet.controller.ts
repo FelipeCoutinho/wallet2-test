@@ -29,10 +29,15 @@ export class WalletController {
   @Post()
   creat(@Body() body: CreateWalletDto) {
     try {
-      return Promise.all([
-        this.walletService.create(body),
-        this.userService.createUser(),
-      ]);
+      return Promise.all([this.walletService.create(body)]);
+    } catch (error) {
+      return error.stack;
+    }
+  }
+  @Post('createUser')
+  creatUser(@Body() body) {
+    try {
+      return Promise.all([this.userService.createUser(body)]);
     } catch (error) {
       return error.stack;
     }

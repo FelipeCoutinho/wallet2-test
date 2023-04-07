@@ -1,15 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { user } from 'src/wallet/test/user.mock';
-
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createUser(): Promise<any> {
+  async createUser(data): Promise<any> {
     try {
-      return this.prisma.user.createMany({
-        data: user,
+      return this.prisma.user.create({
+        data,
       });
     } catch (error) {
       throw new Error(error);

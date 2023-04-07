@@ -63,19 +63,26 @@ export class PaymentService {
     paymentType: number,
   ) {
     try {
+      const previousBalance = wallet.balance;
+
       if (paymentType === PaymentTypeEnum.BALANCE) {
         if (wallet.balance < amount) {
           return new BadRequestException(
             'your balance is not enough for  this payment',
           );
         }
-
         wallet.balance -= amount;
       }
 
       const [paymentResult, transactionResult] = await Promise.all([
         this.walletRepository.payment(walletId, wallet.balance),
-        this.transaction(walletId, amount, operationEnum.PAYMENT),
+        this.transaction(
+          walletId,
+          amount,
+          operationEnum.PAYMENT,
+          wallet.balance,
+          previousBalance,
+        ),
       ]);
 
       return {
@@ -95,6 +102,8 @@ export class PaymentService {
     paymentType: number,
   ) {
     try {
+      const previousBalance = creditcard.balance;
+
       if (paymentType === PaymentTypeEnum.CREDCARD) {
         if (creditcard.balance < amount) {
           return new BadRequestException(
@@ -110,7 +119,13 @@ export class PaymentService {
           creditcard.credcardId,
           creditcard.balance,
         ),
-        this.transaction(walletId, amount, operationEnum.PAYMENT),
+        this.transaction(
+          walletId,
+          amount,
+          operationEnum.PAYMENT,
+          creditcard.balance,
+          previousBalance,
+        ),
       ]);
 
       return {
@@ -186,12 +201,14 @@ export class PaymentService {
     }
   }
 
-  async transaction(walletId, amount, type) {
+  async transaction(walletId, amount, type, balance, previousBalance) {
     try {
       const operation = {
         walletId,
         amount,
         type,
+        balance,
+        previousBalance,
       };
 
       return this.transactionRepository.create(operation);

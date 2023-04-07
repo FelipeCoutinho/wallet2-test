@@ -24,6 +24,8 @@ CREATE TABLE "Wallet" (
 CREATE TABLE "transactions" (
     "creditcardId" SERIAL NOT NULL,
     "walletId" INTEGER NOT NULL,
+    "balance" DOUBLE PRECISION NOT NULL,
+    "previousBalance" DOUBLE PRECISION NOT NULL,
     "amount" DOUBLE PRECISION NOT NULL,
     "type" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

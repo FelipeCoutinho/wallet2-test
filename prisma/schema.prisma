@@ -31,13 +31,15 @@ model Wallet {
 }
 
 model transactions {
-  creditcardId Int      @id @default(autoincrement())
-  walletId     Int
-  amount       Float
-  type         String
-  wallat       Wallet   @relation(fields: [walletId], references: [walletId])
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now())
+  creditcardId    Int      @id @default(autoincrement())
+  walletId        Int
+  balance         Float
+  previousBalance Float
+  amount          Float
+  type            String
+  wallat          Wallet   @relation(fields: [walletId], references: [walletId])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now())
 }
 
 model creditcard {
