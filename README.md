@@ -39,7 +39,7 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 ## ER
-![image](https://user-images.githubusercontent.com/30913247/229671152-e15ec673-2ba5-4ed9-a28b-32e316fa9da1.png)
+![image](https://user-images.githubusercontent.com/30913247/230661192-3f1a0a49-2c25-4cfc-a0a2-534ae440fd33.png)
 
 ## UML
 ![image](https://user-images.githubusercontent.com/30913247/229671276-21ded2af-5af1-4cf9-a080-ac76c162b4a9.png)
