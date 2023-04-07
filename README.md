@@ -66,6 +66,6 @@ $ docker compose -f dockerfiles/docker-compose.yml up --build
 ```sh
 $ docker image list
 REPOSITORY                  TAG       IMAGE ID       CREATED         SIZE
-fiscal-backend         0.0.1     6770c550a346   7 minutes ago   313MB
+WALLET         0.0.1     6770c550a346   7 minutes ago   313MB
 ```
 
