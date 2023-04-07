@@ -38,11 +38,11 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
-## ER
+## UML
 ![image](https://user-images.githubusercontent.com/30913247/230661192-3f1a0a49-2c25-4cfc-a0a2-534ae440fd33.png)
 
-## UML
-![image](https://user-images.githubusercontent.com/30913247/229671276-21ded2af-5af1-4cf9-a080-ac76c162b4a9.png)
+## DER
+![image](https://user-images.githubusercontent.com/30913247/230661354-7b38021e-bacc-4155-af26-504a3fdc7fae.png)
 
 ## LOGIC
 ![image](https://user-images.githubusercontent.com/30913247/229671390-6ee5295a-adba-4fd2-94e9-10d74f88ed2b.png)
