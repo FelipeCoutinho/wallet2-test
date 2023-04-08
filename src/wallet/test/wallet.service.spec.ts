@@ -8,12 +8,15 @@ import {
   TransactionRepositoryMock,
   walletRepositoryMock,
 } from './waller.mock';
+import { PaymentService } from '../../payment/payment.service';
+import { PaymentTypeEnum } from '../enum/payment.enum';
 
 describe('WalletService', () => {
   let walletService: WalletService;
   let walletRepository: WalletRepository;
   let creditCardRepository: CreditCardRepository;
   let transactionRepository: TransactionRepository;
+  let paymentService: PaymentService;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -93,14 +96,14 @@ describe('WalletService', () => {
   });
   describe('When call the function withdraw', () => {
     it('should return a list the withdraw', async () => {
-      const walletResult = await walletService.withdraw(10, 1000);
+      const walletResult = await walletService.withdraw(10, 20);
       expect({
         walletId: 10,
         amount: 10000,
         type: 'DEPOSIT',
         balance: 10050,
         previousBalance: 50,
-      }).toEqual(walletResult.stratum);
+      }).toEqual(walletResult.transactionResult);
     });
   });
 });

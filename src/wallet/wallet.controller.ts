@@ -5,9 +5,9 @@ import {
   chargebackDTO,
   paymentDTO,
 } from './dto/create-wallet.dto';
-import { PaymentService } from 'src/payment/payment.service';
-import { ChargebackService } from 'src/chargeback/chargeback.service';
-import { UserService } from 'src/user/user.service';
+import { PaymentService } from '../payment/payment.service';
+import { ChargebackService } from '../chargeback/chargeback.service';
+import { UserService } from '../user/user.service';
 
 @Controller('wallet')
 export class WalletController {

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { BadRequestException } from '@nestjs/common';
-import { BankstatementRepository } from './prisma/bankstate.repository';
+import { BankstatementRepository } from '../bankstatemant/prisma/bankstate.repository';
 
 @Injectable()
 export class BankstatemantService {
