@@ -31,7 +31,7 @@ model Wallet {
 }
 
 model transactions {
-  creditcardId    Int      @id @default(autoincrement())
+  transactionId   Int      @id @default(autoincrement())
   walletId        Int
   balance         Float
   previousBalance Float
