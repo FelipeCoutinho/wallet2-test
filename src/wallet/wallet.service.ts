@@ -5,7 +5,6 @@ import { WalletRepository } from './prisma/wallet.repository';
 import { operationEnum } from './enum/payment.enum';
 import { TransactionRepository } from '../transactions/Transaction.repository';
 import { CreditCardRepository } from '../creditcard/creditcard.repository';
-import { error } from 'console';
 @Injectable()
 export class WalletService {
   constructor(

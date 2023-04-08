@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
 import { WalletService } from './wallet.service';
 import { WalletController } from './wallet.controller';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { WalletRepository } from './prisma/wallet.repository';
 import { PrismaWalletRepository } from './prisma/prisma.wallet.repository';
-import { PrismaTransactionRepository } from 'src/transactions/prisma.transaction.repository';
-import { TransactionRepository } from 'src/transactions/Transaction.repository';
-import { CreditCardRepository } from 'src/creditcard/creditcard.repository';
-import { PrismaCreditCardRepository } from 'src/creditcard/prisma.creditcard.repository';
-import { PaymentService } from 'src/payment/payment.service';
-import { ChargebackService } from 'src/chargeback/chargeback.service';
-import { UserService } from 'src/user/user.service';
+import { PrismaTransactionRepository } from '../transactions/prisma.transaction.repository';
+import { TransactionRepository } from '../transactions/Transaction.repository';
+import { CreditCardRepository } from '../creditcard/creditcard.repository';
+import { PrismaCreditCardRepository } from '../creditcard/prisma.creditcard.repository';
+import { PaymentService } from '../payment/payment.service';
+import { ChargebackService } from '../chargeback/chargeback.service';
+import { UserService } from '../user/user.service';
 
 @Module({
   controllers: [WalletController],
