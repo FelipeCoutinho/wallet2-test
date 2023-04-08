@@ -8,15 +8,12 @@ import {
   TransactionRepositoryMock,
   walletRepositoryMock,
 } from './waller.mock';
-import { PaymentService } from '../../payment/payment.service';
-import { PaymentTypeEnum } from '../enum/payment.enum';
 
 describe('WalletService', () => {
   let walletService: WalletService;
   let walletRepository: WalletRepository;
   let creditCardRepository: CreditCardRepository;
   let transactionRepository: TransactionRepository;
-  let paymentService: PaymentService;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
