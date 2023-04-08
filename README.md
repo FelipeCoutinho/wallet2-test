@@ -38,27 +38,37 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
-## ER
-![image](https://user-images.githubusercontent.com/30913247/229671152-e15ec673-2ba5-4ed9-a28b-32e316fa9da1.png)
-
 ## UML
-![image](https://user-images.githubusercontent.com/30913247/229671276-21ded2af-5af1-4cf9-a080-ac76c162b4a9.png)
+![image](https://user-images.githubusercontent.com/30913247/230661192-3f1a0a49-2c25-4cfc-a0a2-534ae440fd33.png)
+
+## DER
+![image](https://user-images.githubusercontent.com/30913247/230661474-096fd76a-7b12-426f-ba32-79f9fe6106a6.png)
 
 ## LOGIC
 ![image](https://user-images.githubusercontent.com/30913247/229671390-6ee5295a-adba-4fd2-94e9-10d74f88ed2b.png)
 
 Link da documentação: https://app.diagrams.net/#G1LdAEeKeAHpw8F96Z1rubbvg7tL5a046K
 
-## Support
+# Docker
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Execute one of the following steps to have the application running on http://localhost:3000.
 
-## Stay in touch
+## Running with docker compose (recommended)
 
-- Author - Felipe Coutinho
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```sh
+$ docker compose -f dockerfiles/docker-compose.yml up --build
+```
 
-## License
+## Running with docker
 
-Nest is [MIT licensed](LICENSE).
+
+
+```sh
+$ docker image list
+REPOSITORY                  TAG       IMAGE ID       CREATED         SIZE
+app-wallet         0.0.1     6770c550a346   7 minutes ago   313MB
+```
+
+```sh
+$ docker start app-wallet
+```
