@@ -1,27 +1,29 @@
-FROM node:16-alpine as builder
+# build
+FROM node:18-alpine AS builder
+WORKDIR /app
 
-ENV NODE_ENV build
 
-USER node
-WORKDIR /home/node
+RUN apk update && apk add python3 make g++
 
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --only=production
+RUN npm prune --production
+RUN npm install
 
-COPY --chown=node:node . .
-RUN npm run build \
-    && npm prune --production
+COPY . ./
+RUN npm run build
+# release
+FROM node:18-alpine
+WORKDIR /app
 
+# env vars
+ENV NODE_ENV=production
 
-FROM node:16-alpine
+# copy
+COPY --from=builder /app/.package.*.txt /app/
+COPY --from=builder /app/dist /app/dist
+COPY --from=builder /app/node_modules /app/node_modules
 
-ENV NODE_ENV production
-
-USER node
-WORKDIR /home/node
-
-COPY --from=builder --chown=node:node /home/node/package*.json ./
-COPY --from=builder --chown=node:node /home/node/node_modules/ ./node_modules/
-COPY --from=builder --chown=node:node /home/node/dist/ ./dist/
-
-CMD ["node", "dist/main"]
+# run
+EXPOSE 3000
+CMD ["node", "dist/main.js"]

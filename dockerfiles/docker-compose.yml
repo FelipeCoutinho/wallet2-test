@@ -2,6 +2,7 @@ version: '3.1'
 services:
   app-wallet:
     container_name: app-wallet
+    restart: always
     build:
       context: ../
       dockerfile: dockerfiles/Dockerfile
@@ -9,10 +10,12 @@ services:
       - '3000:3000'
     volumes:
       - .:/app
-    command: npm run start
+    environment:
+      - NODE_ENV=production
 
   database:
     image: postgres
+    container_name: dbwallet
     environment:
       - POSTGRES_USER=walletteste
       - POSTGRES_PASSWORD=123
