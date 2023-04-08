@@ -1,30 +1,27 @@
-# build
-FROM node:18 AS builder
-WORKDIR /app
+FROM node:16-alpine as builder
 
-RUN apk update && apk add python3 make g++
+ENV NODE_ENV build
+
+USER node
+WORKDIR /home/node
 
 COPY package*.json ./
-RUN npm ci --only=production
-RUN npm prune --production
+RUN npm ci
 
-RUN rm -f .npmrc
+COPY --chown=node:node . .
+RUN npm run build \
+    && npm prune --production
 
-COPY . ./
 
-# release
-FROM node:18
-WORKDIR /app
+FROM node:16-alpine
 
-# env vars
-ENV NODE_ENV=production
+ENV NODE_ENV production
 
-# copy
-COPY --from=builder /app/newrelic.js /app/
-COPY --from=builder /app/package.json /app/
-COPY --from=builder /app/node_modules /app/node_modules
-COPY --from=builder /app/src /app/src
+USER node
+WORKDIR /home/node
 
-# run
-EXPOSE 3000
-CMD ["node", "src/main.js"]
+COPY --from=builder --chown=node:node /home/node/package*.json ./
+COPY --from=builder --chown=node:node /home/node/node_modules/ ./node_modules/
+COPY --from=builder --chown=node:node /home/node/dist/ ./dist/
+
+CMD ["node", "dist/main"]
