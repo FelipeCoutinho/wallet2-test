@@ -1,0 +1,148 @@
+on:
+  push:
+    branches:
+      - main
+      - development
+      - release
+      - 'feature/**'      
+    paths-ignore:
+      - '**/*.md'
+      - '.scafflater/**'
+  pull_request:
+    branches:
+      - main
+      - development
+      - release
+    paths-ignore:
+      - '**/*.md'
+      - '.scafflater/**'
+  workflow_dispatch:
+
+name: Standard
+
+env:
+  app_name: 'wallet'
+  aws_region_dev: 'us-east-1'
+  aws_region_hml: 'us-east-1'
+  aws_region_prd: 'us-east-1'
+  enable_api_gateway: 'false'
+  enable_vpc: 'false'
+  namespace: 'wallet'
+
+jobs:
+  ci:
+    name: CI - Build and Test
+    runs-on: ['self-hosted', 'wallet']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          registry-url: https://npm.pkg.github.com/
+      - name: Install Dependencies
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GHA_PACKAGES }}
+      - name: Lint
+        run: npm run lint
+      - name: Test
+        run: npm test
+      - name: Sonar Analysis
+        uses: sonarsource/sonarcloud-github-action@master
+        if: ${{ vars.SONAR_ENABLED == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+  cd_dev:
+    name: CD - DEV
+    if: ${{ success() && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request' && (github.ref == 'refs/heads/development') }}
+    needs: [ci]
+    runs-on: ['self-hosted', 'wallet']
+    environment:
+      name: dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Deploy Infra
+        uses: fctech/actions-cd-eks@v1
+        id: actions-cd-infra
+        with:
+          appName: ${{ env.app_name }}
+          awsRegion: ${{ env.aws_region_dev }}
+          environment: dev
+          namespace: ${{ env.namespace }}
+          type: infra
+          vs: ${{ env.value_stream }}
+      - name: Deploy Serverless
+        uses: fctech/actions-cd-serverless@v3
+        id: actions-cd-app
+        with:
+          appName: ${{ env.app_name }}
+          enableApiGateway: ${{ env.enable_api_gateway }}
+          enableVpc: ${{ env.enable_vpc }}
+          environment: dev
+          nodeAuthToken: ${{ secrets.GHA_PACKAGES }}
+          vs: ${{ env.value_stream }}
+  cd_hml:
+    name: CD - HML
+    if: ${{ success() && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request' && (github.ref == 'refs/heads/release') }}
+    needs: [ci]
+    runs-on: ['self-hosted', 'wallet']
+    environment:
+      name: hml
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Deploy Infra
+        uses: fctech/actions-cd-eks@v1
+        id: actions-cd-infra
+        with:
+          appName: ${{ env.app_name }}
+          awsRegion: ${{ env.aws_region_hml }}
+          environment: hml
+          namespace: ${{ env.namespace }}
+          type: infra
+          vs: ${{ env.value_stream }}
+      - name: Deploy Serverless
+        uses: fctech/actions-cd-serverless@v3
+        id: actions-cd-app
+        with:
+          appName: ${{ env.app_name }}
+          enableApiGateway: ${{ env.enable_api_gateway }}
+          enableVpc: ${{ env.enable_vpc }}
+          environment: hml
+          nodeAuthToken: ${{ secrets.GHA_PACKAGES }}
+          vs: ${{ env.value_stream }}
+  cd_prd:
+    name: CD - PRD
+    if: ${{ success() && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request' && (github.ref == 'refs/heads/main') }}
+    needs: [ci]
+    runs-on: ['self-hosted', 'wallet']
+    environment:
+      name: prd
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Deploy Infra
+        uses: fctech/actions-cd-eks@v1
+        id: actions-cd-infra
+        with:
+          appName: ${{ env.app_name }}
+          awsRegion: ${{ env.aws_region_prd }}
+          environment: prd
+          namespace: ${{ env.namespace }}
+          type: infra
+          vs: ${{ env.value_stream }}
+      - name: Deploy Serverless
+        uses: fctech/actions-cd-serverless@v3
+        id: actions-cd-app
+        with:
+          appName: ${{ env.app_name }}
+          enableApiGateway: ${{ env.enable_api_gateway }}
+          enableVpc: ${{ env.enable_vpc }}
+          environment: prd
+          nodeAuthToken: ${{ secrets.GHA_PACKAGES }}
+          vs: ${{ env.value_stream }}
