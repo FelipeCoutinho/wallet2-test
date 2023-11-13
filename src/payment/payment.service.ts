@@ -65,12 +65,13 @@ export class PaymentService {
     try {
       const previousBalance = wallet.balance;
 
+      if (wallet.balance < amount) {
+        return new BadRequestException(
+          'your balance is not enough for  this payment',
+        );
+      }
+      
       if (paymentType === PaymentTypeEnum.BALANCE) {
-        if (wallet.balance < amount) {
-          return new BadRequestException(
-            'your balance is not enough for  this payment',
-          );
-        }
         wallet.balance -= amount;
       }
 
